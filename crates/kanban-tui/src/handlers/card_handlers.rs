@@ -2,7 +2,7 @@ use crate::app::{App, AppMode, CardField, DialogMode, Focus};
 use crate::card_list::CardListId;
 use crate::events::EventHandler;
 use kanban_domain::commands::{CreateCard, MoveCard, RestoreCard, SetBoardTaskSort, UpdateCard};
-use kanban_domain::{ArchivedCard, CardStatus, CardUpdate, Column, SortOrder, Sprint};
+use kanban_domain::{ArchivedCard, CardStatus, CardUpdate, Column, FieldUpdate, SortOrder, Sprint};
 use ratatui::{backend::CrosstermBackend, Terminal};
 use std::io;
 
@@ -70,6 +70,48 @@ impl App {
                         self.sprint_assign_selection.set(Some(selection_idx));
                         self.open_dialog(DialogMode::AssignCardToSprint);
                     }
+                }
+            }
+        }
+    }
+
+    pub fn handle_set_assignee_key(&mut self) {
+        if self.focus != Focus::Cards {
+            return;
+        }
+        if let Some(card) = self.get_selected_card_in_context() {
+            let card_id = card.id;
+            let current_assignee = card.assigned_to.clone();
+            let actual_idx = self.ctx.cards.iter().position(|c| c.id == card_id);
+            self.active_card_index = actual_idx;
+            if let Some(assignee) = current_assignee {
+                self.input.set(assignee);
+            } else {
+                self.input.clear();
+            }
+            self.open_dialog(DialogMode::SetCardAssignee);
+        }
+    }
+
+    pub fn set_card_assignee(&mut self) {
+        if let Some(card_idx) = self.active_card_index {
+            if let Some(card) = self.ctx.cards.get(card_idx) {
+                let card_id = card.id;
+                let input = self.input.as_str().trim().to_string();
+                let assigned_to = if input.is_empty() {
+                    FieldUpdate::Clear
+                } else {
+                    FieldUpdate::Set(input)
+                };
+                let cmd = Box::new(UpdateCard {
+                    card_id,
+                    updates: CardUpdate {
+                        assigned_to,
+                        ..Default::default()
+                    },
+                });
+                if let Err(e) = self.execute_command(cmd) {
+                    tracing::error!("Failed to set assignee: {}", e);
                 }
             }
         }

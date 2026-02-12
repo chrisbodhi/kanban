@@ -98,6 +98,7 @@ pub fn render(app: &mut App, frame: &mut Frame) {
                 DialogMode::ConfirmSprintPrefixCollision => {}
                 DialogMode::ManageParents => render_manage_parents_popup(app, frame),
                 DialogMode::ManageChildren => render_manage_children_popup(app, frame),
+                DialogMode::SetCardAssignee => render_set_card_assignee_popup(app, frame),
             }
         }
     } else {
@@ -762,6 +763,16 @@ fn render_card_detail_view(app: &App, frame: &mut Frame, area: Rect) {
             }
         }
     }
+}
+
+fn render_set_card_assignee_popup(app: &App, frame: &mut Frame) {
+    render_input_popup(
+        frame,
+        "Set Assignee",
+        "Assignee (empty to clear):",
+        app.input.as_str(),
+        app.input.cursor_byte_offset(),
+    );
 }
 
 fn render_rename_board_popup(app: &App, frame: &mut Frame) {

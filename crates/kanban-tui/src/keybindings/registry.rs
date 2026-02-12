@@ -91,6 +91,9 @@ impl KeybindingRegistry {
                 DialogMode::ManageChildren => {
                     Box::new(DialogSelectionProvider::new("Set Children"))
                 }
+                DialogMode::SetCardAssignee => {
+                    Box::new(DialogInputProvider::new("Set Assignee"))
+                }
             },
         }
     }

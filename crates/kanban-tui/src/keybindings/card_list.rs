@@ -138,6 +138,12 @@ impl KeybindingProvider for CardListProvider {
                     "Open filter options",
                     KeybindingAction::ToggleHideAssigned,
                 ),
+                Keybinding::new(
+                    "@",
+                    "assignee",
+                    "Set task assignee",
+                    KeybindingAction::SetAssignee,
+                ),
                 Keybinding::new("/", "search", "Search tasks", KeybindingAction::Search),
                 Keybinding::new(
                     "Enter/Space",

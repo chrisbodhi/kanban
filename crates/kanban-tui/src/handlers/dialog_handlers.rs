@@ -61,6 +61,21 @@ impl App {
         }
     }
 
+    pub fn handle_set_card_assignee_dialog(&mut self, key_code: KeyCode) {
+        match handle_dialog_input(&mut self.input, key_code, false) {
+            DialogAction::Confirm => {
+                self.set_card_assignee();
+                self.pop_mode();
+                self.input.clear();
+            }
+            DialogAction::Cancel => {
+                self.pop_mode();
+                self.input.clear();
+            }
+            DialogAction::None => {}
+        }
+    }
+
     pub fn handle_rename_board_dialog(&mut self, key_code: KeyCode) {
         match handle_dialog_input(&mut self.input, key_code, false) {
             DialogAction::Confirm => {
