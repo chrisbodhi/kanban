@@ -114,5 +114,13 @@ pub fn render_card_list_item(config: CardListItemConfig) -> Line<'static> {
         spans.push(Span::styled(suffix_text, suffix_style));
     }
 
+    if let Some(assignee) = &config.card.assigned_to {
+        let mut assignee_style = label_text();
+        if config.is_selected && config.is_focused {
+            assignee_style = assignee_style.bg(SELECTED_BG);
+        }
+        spans.push(Span::styled(format!(" @{}", assignee), assignee_style));
+    }
+
     Line::from(spans)
 }

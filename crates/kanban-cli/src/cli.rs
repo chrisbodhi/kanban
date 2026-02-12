@@ -250,6 +250,8 @@ pub struct CardCreateArgs {
     pub points: Option<u8>,
     #[arg(long)]
     pub due_date: Option<String>,
+    #[arg(long)]
+    pub assigned_to: Option<String>,
 }
 
 #[derive(Args)]
@@ -284,6 +286,10 @@ pub struct CardUpdateArgs {
     pub due_date: Option<String>,
     #[arg(long)]
     pub clear_due_date: bool,
+    #[arg(long)]
+    pub assigned_to: Option<String>,
+    #[arg(long)]
+    pub clear_assigned_to: bool,
 }
 
 // Sprint commands

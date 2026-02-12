@@ -138,6 +138,7 @@ fn build_create_options(args: &CardCreateArgs) -> Result<CreateCardOptions, Stri
         priority,
         points: args.points,
         due_date,
+        assigned_to: args.assigned_to.clone(),
     })
 }
 
@@ -176,6 +177,14 @@ fn build_card_update(args: &CardUpdateArgs) -> Result<CardUpdate, String> {
         sprint_id: FieldUpdate::NoChange,
         assigned_prefix: FieldUpdate::NoChange,
         card_prefix: FieldUpdate::NoChange,
+        assigned_to: if args.clear_assigned_to {
+            FieldUpdate::Clear
+        } else {
+            args.assigned_to
+                .clone()
+                .map(FieldUpdate::Set)
+                .unwrap_or(FieldUpdate::NoChange)
+        },
     })
 }
 

@@ -74,6 +74,8 @@ pub struct Card {
     pub assigned_prefix: Option<String>,
     #[serde(default)]
     pub card_prefix: Option<String>,
+    #[serde(default)]
+    pub assigned_to: Option<String>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
     #[serde(default)]
@@ -100,6 +102,8 @@ pub struct CardSummary {
     pub assigned_prefix: Option<String>,
     #[serde(default)]
     pub card_prefix: Option<String>,
+    #[serde(default)]
+    pub assigned_to: Option<String>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
     #[serde(default)]
@@ -121,6 +125,7 @@ impl From<&Card> for CardSummary {
             sprint_id: card.sprint_id,
             assigned_prefix: card.assigned_prefix.clone(),
             card_prefix: card.card_prefix.clone(),
+            assigned_to: card.assigned_to.clone(),
             created_at: card.created_at,
             updated_at: card.updated_at,
             completed_at: card.completed_at,
@@ -152,6 +157,7 @@ impl Card {
             sprint_id: None,
             assigned_prefix: Some(prefix.to_string()),
             card_prefix: None,
+            assigned_to: None,
             created_at: now,
             updated_at: now,
             completed_at: None,
@@ -331,6 +337,7 @@ impl Card {
         updates.sprint_id.apply_to(&mut self.sprint_id);
         updates.assigned_prefix.apply_to(&mut self.assigned_prefix);
         updates.card_prefix.apply_to(&mut self.card_prefix);
+        updates.assigned_to.apply_to(&mut self.assigned_to);
         self.updated_at = Utc::now();
     }
 }
@@ -352,6 +359,7 @@ pub struct CardUpdate {
     pub sprint_id: FieldUpdate<Uuid>,
     pub assigned_prefix: FieldUpdate<String>,
     pub card_prefix: FieldUpdate<String>,
+    pub assigned_to: FieldUpdate<String>,
 }
 
 #[derive(Debug, Clone, Default)]
@@ -360,6 +368,7 @@ pub struct CreateCardOptions {
     pub priority: Option<CardPriority>,
     pub points: Option<u8>,
     pub due_date: Option<DateTime<Utc>>,
+    pub assigned_to: Option<String>,
 }
 
 impl GraphNode for Card {

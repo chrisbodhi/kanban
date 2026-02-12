@@ -148,6 +148,7 @@ fn create_card_then_update_with_all_fields() {
                 sprint_id: kanban_domain::FieldUpdate::NoChange,
                 assigned_prefix: kanban_domain::FieldUpdate::NoChange,
                 card_prefix: kanban_domain::FieldUpdate::NoChange,
+                assigned_to: kanban_domain::FieldUpdate::NoChange,
             },
         )
         .unwrap();
