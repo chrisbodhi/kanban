@@ -1,7 +1,7 @@
 # Agent Orchestration Framework — Fitness Assessment
 
 **Date**: 2026-02-11
-**Branch**: `plan-agent-orchestration`
+**Branch**: `agent-orchestration` (on fork `chrisbodhi/kanban`)
 **Assessed by**: Claude Code (Opus 4.6)
 
 ## Vision
@@ -143,3 +143,64 @@ MCP over stdio requires the orchestrator and agents to be local processes. Remot
 - Undo/redo snapshot system gives safe rollback if an agent makes a mistake
 - Codebase is well-tested and published on crates.io
 - SOLID architecture means agent-specific extensions compose naturally without touching existing code
+
+---
+
+## Development Workflow
+
+All agent orchestration work happens on a **fork** to keep the upstream repo clean until the feature set is ready.
+
+### Repository Structure
+
+| Remote | Repo | Purpose |
+|--------|------|---------|
+| `origin` | `fulsomenko/kanban` | Upstream source of truth |
+| `fork` | `chrisbodhi/kanban` | Agent orchestration development |
+
+### Branch Strategy
+
+```
+fulsomenko/kanban:develop          (upstream, stable)
+    └── chrisbodhi/kanban:agent-orchestration   (long-lived integration branch)
+            ├── add-card-assignee-field          (PR #1 - merged)
+            ├── add-card-comments                (future)
+            ├── multi-board-mcp                  (future)
+            └── ...
+```
+
+- **`agent-orchestration`** on the fork is the integration branch for all agent work
+- Feature branches are created off `agent-orchestration` and PR'd back into it
+- When the full feature set is ready, one PR from `chrisbodhi:agent-orchestration` -> `fulsomenko:develop` brings it upstream
+
+### Day-to-Day Commands
+
+```bash
+# Start new feature work
+git checkout agent-orchestration
+git pull fork agent-orchestration
+git checkout -b my-feature-branch
+
+# Push and PR against agent-orchestration
+git push fork my-feature-branch
+gh pr create --repo chrisbodhi/kanban --base agent-orchestration
+
+# Sync with upstream periodically
+git fetch origin develop
+git checkout agent-orchestration
+git merge origin/develop
+git push fork agent-orchestration
+```
+
+### Progress Tracking
+
+| Phase | Item | Status |
+|-------|------|--------|
+| 1 | `assigned_to` field on Card | Done (PR #1) |
+| 1 | Comments/activity log on Card | Pending |
+| 1 | Column-based workflow convention | Pending |
+| 2 | Hub board pattern | Pending |
+| 2 | Multi-file MCP | Pending |
+| 2 | Agent registry | Pending |
+| 3 | HTTP API | Pending |
+| 3 | Event/notification system | Pending |
+| 3 | Agent health checks | Pending |

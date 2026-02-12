@@ -164,6 +164,36 @@ cargo tarpaulin        # Code coverage
 4. **TUI Components**: Build UI in `kanban-tui`
 5. **Integration**: Wire up in `kanban-cli`
 
+## Agent Orchestration Development
+
+This repo is being evaluated and extended as the bedrock for an **agent orchestration framework** — enabling Claude Code instances to accept work, report status, and move through workflow states via the kanban board.
+
+See [`docs/agent-orchestration-assessment.md`](docs/agent-orchestration-assessment.md) for the full vision, gap analysis, and phased build plan.
+
+### Fork Workflow
+
+All agent orchestration work happens on a fork to keep upstream clean:
+
+- **Upstream**: `fulsomenko/kanban` (remote `origin`)
+- **Fork**: `chrisbodhi/kanban` (remote `fork`)
+- **Integration branch**: `agent-orchestration` on the fork
+- Feature branches PR into `agent-orchestration`, not `develop`
+- When ready, one PR from `chrisbodhi:agent-orchestration` -> `fulsomenko:develop`
+
+```bash
+# New feature work
+git checkout agent-orchestration && git pull fork agent-orchestration
+git checkout -b my-feature
+# ... work ...
+git push fork my-feature
+gh pr create --repo chrisbodhi/kanban --base agent-orchestration
+
+# Sync with upstream
+git fetch origin develop
+git checkout agent-orchestration && git merge origin/develop
+git push fork agent-orchestration
+```
+
 ## Guidelines
 
 - **No comments** unless documenting public APIs or complex algorithms
