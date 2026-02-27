@@ -245,6 +245,8 @@ pub struct CreateCardRequest {
         description = "Due date in YYYY-MM-DD or RFC 3339 format (e.g. 2024-06-15 or 2024-06-15T10:30:00Z)"
     )]
     pub due_date: Option<String>,
+    #[schemars(description = "Assignee name or identifier (optional)")]
+    pub assigned_to: Option<String>,
 }
 
 #[derive(Debug, Deserialize, schemars::JsonSchema)]
@@ -285,6 +287,10 @@ pub struct UpdateCardRequest {
     pub clear_due_date: Option<bool>,
     #[schemars(description = "Story points (optional, 0-255)")]
     pub points: Option<u8>,
+    #[schemars(description = "Assignee name or identifier (optional, use clear_assigned_to to remove)")]
+    pub assigned_to: Option<String>,
+    #[schemars(description = "Clear the assigned_to field (set to true to unassign)")]
+    pub clear_assigned_to: Option<bool>,
 }
 
 #[derive(Debug, Deserialize, schemars::JsonSchema)]
@@ -635,6 +641,7 @@ impl KanbanMcpServer {
             priority,
             points: req.points,
             due_date,
+            assigned_to: req.assigned_to,
         };
 
         let card = spawn_op!(
@@ -679,7 +686,7 @@ impl KanbanMcpServer {
     }
 
     #[tool(
-        description = "Update a card's properties (title, description, priority, status, due_date, points)"
+        description = "Update a card's properties (title, description, priority, status, due_date, points, assigned_to)"
     )]
     async fn tool_update_card(
         &self,
@@ -714,6 +721,13 @@ impl KanbanMcpServer {
             sprint_id: FieldUpdate::NoChange,
             assigned_prefix: FieldUpdate::NoChange,
             card_prefix: FieldUpdate::NoChange,
+            assigned_to: if req.clear_assigned_to == Some(true) {
+                FieldUpdate::Clear
+            } else {
+                req.assigned_to
+                    .map(FieldUpdate::Set)
+                    .unwrap_or(FieldUpdate::NoChange)
+            },
         };
         let card = spawn_op!(self.ctx, update_card, id, updates)?;
         to_call_tool_result(&card)

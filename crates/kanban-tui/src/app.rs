@@ -163,6 +163,7 @@ pub enum DialogMode {
     ExternalChangeDetected,
     ManageParents,
     ManageChildren,
+    SetCardAssignee,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -437,6 +438,7 @@ impl App {
             KeybindingAction::JumpHalfViewportDown => self.handle_jump_half_viewport_down(),
             KeybindingAction::ManageParents => self.handle_manage_parents(),
             KeybindingAction::ManageChildren => self.handle_manage_children(),
+            KeybindingAction::SetAssignee => self.handle_set_assignee_key(),
             KeybindingAction::Undo => {
                 if let Err(e) = self.undo() {
                     self.set_error(format!("Undo failed: {}", e));
@@ -480,6 +482,7 @@ impl App {
                 | AppMode::Dialog(DialogMode::RenameColumn)
                 | AppMode::Dialog(DialogMode::SetSprintPrefix)
                 | AppMode::Dialog(DialogMode::SetSprintCardPrefix)
+                | AppMode::Dialog(DialogMode::SetCardAssignee)
         );
 
         if matches!(key.code, KeyCode::Char('q') | KeyCode::Char('Q')) && !is_input_mode {
@@ -583,6 +586,10 @@ impl App {
                 KeyCode::Char('a') => {
                     self.pending_key = None;
                     self.handle_assign_to_sprint_key();
+                }
+                KeyCode::Char('@') => {
+                    self.pending_key = None;
+                    self.handle_set_assignee_key();
                 }
                 KeyCode::Char('c') => {
                     self.pending_key = None;
@@ -754,6 +761,7 @@ impl App {
                 }
                 DialogMode::ManageParents => self.handle_manage_parents_popup(key.code),
                 DialogMode::ManageChildren => self.handle_manage_children_popup(key.code),
+                DialogMode::SetCardAssignee => self.handle_set_card_assignee_dialog(key.code),
             },
         }
         should_restart_events

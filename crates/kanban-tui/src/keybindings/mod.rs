@@ -53,6 +53,7 @@ pub enum KeybindingAction {
     JumpHalfViewportDown,
     ManageParents,
     ManageChildren,
+    SetAssignee,
     Undo,
     Redo,
 }

@@ -60,6 +60,7 @@ impl Command for CreateCard {
                 || self.options.priority.is_some()
                 || self.options.points.is_some()
                 || self.options.due_date.is_some()
+                || self.options.assigned_to.is_some()
             {
                 if let Some(card) = context.cards.last_mut() {
                     let updates = CardUpdate {
@@ -78,6 +79,12 @@ impl Command for CreateCard {
                         due_date: self
                             .options
                             .due_date
+                            .map(crate::FieldUpdate::Set)
+                            .unwrap_or(crate::FieldUpdate::NoChange),
+                        assigned_to: self
+                            .options
+                            .assigned_to
+                            .clone()
                             .map(crate::FieldUpdate::Set)
                             .unwrap_or(crate::FieldUpdate::NoChange),
                         ..Default::default()
